@@ -11,22 +11,29 @@
     [5] => Noran Mohammed               20176041        S3
 */
 
-#include<iostream>
-#include <cmath>
+/*
+Problem Statement:
+    Implement base struct Shape and derived struct Circle, Rectangle and Ellipse simulating polymorphism
+    without using the virtual keyword. Do not use the C++ inheritance or polymorphism mechanisms but simulate
+    them as described in our lecture "Lecture05_GenericProgram".
+    You are allowed to use some lecture code. Your code must be general.
+*/
+
+#include <iostream>
 using namespace std;
 
 // Declare the Base Structure
 struct Shape {
     double area;
     double getArea() { return area; }
-    double infoOfShape;
-    double printInfo() { return infoOfShape; }
+    double ShapeInfo;
+    double printInfo() { return ShapeInfo; }
 };
 
 // compute the area for that paricular shape to get area of circle
 struct Circle:Shape {
     double radius;
-    void info() { infoOfShape = radius; }
+    void info() { ShapeInfo = radius; }
     void calcArea() { area = 3.14 * radius * radius; }
 };
 
@@ -35,7 +42,7 @@ struct Rectangle:Shape{
     double width,height;
     void info()
     {
-        infoOfShape = width;
+        ShapeInfo = width;
         // infoOfShape = height ;
     }
     void calcArea() { area = width * height; }
@@ -43,28 +50,27 @@ struct Rectangle:Shape{
 
 // to get area if ellipse
 struct Ellipse:Shape{
-    double rad1;
-    double rad2;
+    double radius_1;
+    double radius_2;
 
     void info()
     {
-        infoOfShape= rad1;
-        //infoOfShape= rad2;
+        ShapeInfo = radius_1;
+        //infoOfShape= radius_2;
     }
-    void calcArea() { area = 3.14 *rad1 *rad2; }
+    void calcArea() { area = 3.14 * radius_1 * radius_2; }
 };
 
 // Inilize the Circle and compute the area
-void CircleInitialize(Circle* circle, double radius)
+void CircleInitialize (Circle* circle, double radius)
 {
     circle -> radius = radius;
     circle -> calcArea();
     circle -> info();
 }
 
-
 // Initlize the rectangle and compute the area
-void RectangleInitialize(Rectangle* rectangle,double width,double height)
+void RectangleInitialize (Rectangle* rectangle,double width,double height)
 {
     rectangle -> width = width;
     rectangle -> height = height;
@@ -72,37 +78,28 @@ void RectangleInitialize(Rectangle* rectangle,double width,double height)
     rectangle -> info();
 }
 
-
 //Initlize the ellipse and compute the area
-void EllipseInitialize(Ellipse* ellipse,double radius_1, double radius_2){
-    ellipse -> rad1 = radius_1;
-    ellipse -> rad2 = radius_2;
+void EllipseInitialize (Ellipse* ellipse, double radius_1, double radius_2)
+{
+    ellipse-> radius_1 = radius_1;
+    ellipse -> radius_2 = radius_2;
     ellipse -> calcArea();
     ellipse -> info();
 }
 
 // Return the area of thea shape
-double GetArea(Shape *s)
-{
-
-    return s -> getArea();
-
-}
+double GetArea (Shape *shape) { return shape -> getArea(); }
 
 // Return the info of each shape
-double PrintInfo(Shape *s)
-{
-    return s -> printInfo();
-}
-
+double PrintInfo(Shape *shape) {  return shape -> printInfo(); }
 
 int main(){
 
-    Circle circle;
     // circle with radius 10
+    Circle circle;
     CircleInitialize(&circle, 10);
 
-    // rectangle with width 3 and height 5 Square square;
+    // rectangle with width 3 and height 5;
     Rectangle rectangle;
     RectangleInitialize(&rectangle, 3, 5);
 
@@ -115,31 +112,16 @@ int main(){
     shapes[1]=(Shape*)&rectangle;
     shapes[2]=(Shape*)&ellipse;
 
-    double total_area=0;
-    double info0=0;
-    double info1=0;
-    double info2=0;
+    double total_area = 0.0;
 
-    int i;
-
-    for(i=0;i<3;i++) {
-        double d=GetArea(shapes[i]);
-        // prints (cout) the radius if circle,
-        // width and height if rectangle, ... etc
-
-        total_area+=d;
-        // print info of each shape
+    for (short i = 0; i<3; i++)
+    {
+        double d = GetArea(shapes[i]);
+        total_area = total_area + d;
         PrintInfo(shapes[i]);
-        info0=PrintInfo(shapes[i]);
-        i++;
-        info1=PrintInfo(shapes[i]);
-        i++;
-        info2=PrintInfo(shapes[i]);
     }
 
-    cout<<"The Total Area: "<< total_area <<endl;
-    cout<<"The Info Of Shape0 : "<<info0<<endl<<"The Info Of Shape1 : "
-        <<info1<<endl<<"The Info Of Shape2 : "
-        <<info2<<endl;
-    return 0;
+    cout << total_area << endl;
+
+    return 0; // Program Ended Successfully
 }
