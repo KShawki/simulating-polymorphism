@@ -25,16 +25,24 @@ using namespace std;
 // Declare the Base Structure
 struct Shape {
     double area;
+    //function to return area of shape
     double getArea() { return area; }
     double ShapeInfo;
-    double printInfo() { return ShapeInfo; }
+    double ShapeInfo2;
+    //function to return info of shape
+    double printInfo() { return ShapeInfo ; }
+    double printInfo2() { return ShapeInfo2 ; }
 };
 
 // compute the area for that paricular shape to get area of circle
 struct Circle:Shape {
     double radius;
-    void info() { ShapeInfo = radius; }
-    void calcArea() { area = 3.14 * radius * radius; }
+    void info() {
+        ShapeInfo = radius;
+        }
+    void calcArea() {
+        area = 3.14 * radius * radius;
+        }
 };
 
 // to get area of rectangle
@@ -42,23 +50,35 @@ struct Rectangle:Shape{
     double width,height;
     void info()
     {
-        ShapeInfo = width;
-        // infoOfShape = height ;
+        ShapeInfo = width ;
     }
-    void calcArea() { area = width * height; }
+    void info2()
+    {
+        ShapeInfo2 = height;
+
+    }
+    void calcArea() {
+        area = width * height;
+        }
 };
 
-// to get area if ellipse
+// to get area of ellipse
 struct Ellipse:Shape{
-    double radius_1;
-    double radius_2;
+    double radius1;
+    double radius2;
 
     void info()
     {
-        ShapeInfo = radius_1;
-        //infoOfShape= radius_2;
+        ShapeInfo = radius1;
+
     }
-    void calcArea() { area = 3.14 * radius_1 * radius_2; }
+    void info2()
+    {
+        ShapeInfo2 = radius2;
+    }
+    void calcArea() {
+        area = 3.14 * radius1 * radius2;
+         }
 };
 
 // Inilize the Circle and compute the area
@@ -76,22 +96,35 @@ void RectangleInitialize (Rectangle* rectangle,double width,double height)
     rectangle -> height = height;
     rectangle -> calcArea();
     rectangle -> info();
+    rectangle -> info2();
+
 }
 
 //Initlize the ellipse and compute the area
-void EllipseInitialize (Ellipse* ellipse, double radius_1, double radius_2)
-{
-    ellipse-> radius_1 = radius_1;
-    ellipse -> radius_2 = radius_2;
+void EllipseInitialize (Ellipse* ellipse, double radius1, double radius2){
+
+    ellipse -> radius1 = radius1;
+    ellipse -> radius2 = radius2;
     ellipse -> calcArea();
     ellipse -> info();
+    ellipse -> info2();
 }
 
-// Return the area of thea shape
-double GetArea (Shape *shape) { return shape -> getArea(); }
+// Return the area of each shape
+double GetArea (Shape *shape) {
+    return shape -> getArea();
+    }
 
 // Return the info of each shape
-double PrintInfo(Shape *shape) {  return shape -> printInfo(); }
+double PrintInfo(Shape *shape) {
+    return shape -> printInfo();
+    }
+
+// Return the info of each shape
+double PrintInfo2(Shape *shape) {
+    return shape -> printInfo2();
+    }
+
 
 int main(){
 
@@ -114,14 +147,20 @@ int main(){
 
     double total_area = 0.0;
 
-    for (short i = 0; i<3; i++)
+    for(short i = 0; i<3; i++)
     {
         double d = GetArea(shapes[i]);
         total_area = total_area + d;
         PrintInfo(shapes[i]);
-    }
 
-    cout << total_area << endl;
+
+    }
+        cout<<"Total Area Of Shapes = "<<total_area<<endl;
+        cout<<"shape0: redius="<<" "<<PrintInfo(shapes[0])<<endl<<"shape1: width = "<<" "<<PrintInfo(shapes[1])<<" , "
+        <<"height = "<<PrintInfo2(shapes[1])<<endl<<"shape2: radius1 ="<<" "<<PrintInfo(shapes[2])<<" , "
+        <<"radius2 = "<<PrintInfo2(shapes[2]);
+
+
 
     return 0; // Program Ended Successfully
 }
