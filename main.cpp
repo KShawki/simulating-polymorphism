@@ -25,38 +25,45 @@ using namespace std;
 // Declare the Base Structure
 struct Shape {
     double area;
+
+    // Function to return area of shape
     double getArea() { return area; }
     double ShapeInfo;
+
+
     double printInfo() { return ShapeInfo; }
 };
 
 // compute the area for that paricular shape to get area of circle
-struct Circle:Shape {
+struct Circle:Shape
+{
     double radius;
     void info() { ShapeInfo = radius; }
     void calcArea() { area = 3.14 * radius * radius; }
 };
 
 // to get area of rectangle
-struct Rectangle:Shape{
+struct Rectangle:Shape
+{
     double width,height;
     void info()
     {
         ShapeInfo = width;
-        // infoOfShape = height ;
+        // ShapeInfo = height ;
     }
     void calcArea() { area = width * height; }
 };
 
 // to get area if ellipse
-struct Ellipse:Shape{
+struct Ellipse:Shape
+{
     double radius_1;
     double radius_2;
 
     void info()
     {
         ShapeInfo = radius_1;
-        //infoOfShape= radius_2;
+        // ShapeInfo= radius_2;
     }
     void calcArea() { area = 3.14 * radius_1 * radius_2; }
 };
