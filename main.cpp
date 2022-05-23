@@ -6,7 +6,7 @@
  Team Members:
     [1] => Khalid Ibrahim Shawki        20206018        S3
     [2] => Abdelrahman Motaaz           20196032        S3
-    [3] => Sohaila Gamal Ahmed          20196026        S3
+    [3] => Sohaila Gamal Ahmed          20196026        S1
     [4] => Ahmed Mohammed Idrees        20176003        S3
     [5] => Noran Mohammed               20176041        S3
 */
@@ -20,98 +20,214 @@ Problem Statement:
 */
 
 #include <iostream>
+#include <math.h>
 using namespace std;
 
-// Declare the Base Structure
+// struct containing the virtual function that will
+// be changed based on the shape
+struct ShapeVTable;
+
+// that struct represent the parent -super- class
+// which be inheritstruct Shape
 struct Shape {
-    double area;
-
-    // Function to return area of shape
-    double getArea() { return area; }
-    double ShapeInfo;
-
-
-    double printInfo() { return ShapeInfo; }
+    //only has the virtual functions
+    ShapeVTable* VTable;
 };
 
-// compute the area for that paricular shape to get area of circle
-struct Circle:Shape
-{
-    double radius;
-    void info() { ShapeInfo = radius; }
-    void calcArea() { area = 3.14 * radius * radius; }
+struct ShapeVTable {
+    //get the shape area
+    double (*getArea)(Shape*);
+
+    // get the shape data
+    void (*PrintInfo)(Shape*);
+    // free shape resources.
+    void (*Destroy) (Shape*);
 };
 
-// to get area of rectangle
-struct Rectangle:Shape
+// to implement function getArea from the virtual table.
+double getArea(Shape* shape) { shape->VTable->getArea(shape);}
+
+// to implement function getInfo from the virtual table.
+void PrintInfo(Shape* shape) { shape->VTable->PrintInfo(shape);}
+
+// to implement function ShapeDestroy from the virtual table.
+void Destroy(Shape* shape) { return shape->VTable->Destroy(shape); }
+
+//Shape:Circle
+struct Circle
 {
-    double width,height;
-    void info()
-    {
-        ShapeInfo = width;
-        // ShapeInfo = height ;
-    }
-    void calcArea() { area = width * height; }
+     // aggregation with the -super class- shape
+     // that representing the inheritance
+    Shape parent;
+
+    // radius of circle
+    int radius;
 };
 
-// to get area if ellipse
-struct Ellipse:Shape
+//function that get the area of the circle
+double CircleArea(Circle* circle)
 {
-    double radius_1;
-    double radius_2;
-
-    void info()
-    {
-        ShapeInfo = radius_1;
-        // ShapeInfo= radius_2;
-    }
-    void calcArea() { area = 3.14 * radius_1 * radius_2; }
-};
-
-// Inilize the Circle and compute the area
-void CircleInitialize (Circle* circle, double radius)
-{
-    circle -> radius = radius;
-    circle -> calcArea();
-    circle -> info();
+    //area = 3.14*r^2
+    return 3.14*circle->radius*circle->radius;
 }
 
-// Initlize the rectangle and compute the area
-void RectangleInitialize (Rectangle* rectangle,double width,double height)
+//function that get the info of the circle
+void CircleInfo(Circle* circle)
 {
-    rectangle -> width = width;
-    rectangle -> height = height;
-    rectangle -> calcArea();
-    rectangle -> info();
+    cout<<"Shape : Circle"<<endl;
+    cout<<"Area : "<<CircleArea(circle)<<endl;
+    cout<<"radius : "<<circle->radius<<endl;
 }
 
-//Initlize the ellipse and compute the area
-void EllipseInitialize (Ellipse* ellipse, double radius_1, double radius_2)
+// free shape resources.
+void CircleDestroy(Circle* circle)
 {
-    ellipse-> radius_1 = radius_1;
-    ellipse -> radius_2 = radius_2;
-    ellipse -> calcArea();
-    ellipse -> info();
+    delete circle;
 }
 
-// Return the area of thea shape
-double GetArea (Shape *shape) { return shape -> getArea(); }
+//virtual table containing the overridden
+//GetArea abstract function for the circle
+ShapeVTable circleTable = {
 
-// Return the info of each shape
-double PrintInfo(Shape *shape) {  return shape -> printInfo(); }
+    //casting circleArea function to
+    //match getArea and getInfo abstract function
+    (double(*)(Shape*)) CircleArea  ,
+    (void(*)(Shape*)) CircleInfo ,
+    (void (*) (Shape*)) CircleDestroy
+};
+
+//function that represent the constructor of the circle class
+void CircleInitialize(Circle* circle, int radius)
+{
+    //initialize super class virtual
+    //function to the overridden circleArea
+    circle->parent.VTable =&circleTable;
+
+    // initialize the circle radius
+    circle->radius =radius;
+}
+
+// struct represent the inherited class rectangl
+struct Rectangle
+{
+    // aggregation with the -super class- shape
+    // that representing the inheritance
+    Shape parent;
+
+    // rectangle's height
+    int height ;
+
+    // rectangle's width
+    int width;
+};
+
+//function that get the rectangle's area
+double RectangleArea(Rectangle* rectangle)
+{
+    //area = height * width
+    return rectangle->height * rectangle->width;
+}
+
+//function that get the info of the Rectangle
+void RectangleInfo(Rectangle* rectangle)
+{
+    cout<<"Shape : Rectangle "<<endl;
+    cout<<"Area : "<<RectangleArea(rectangle)<<endl;
+    cout<<"height : "<<rectangle->height<<endl;
+    cout<<"width : "<<rectangle->width<<endl;
+}
+
+// free shape resources.
+void RectangleDestroy(Rectangle* rectangle) { delete rectangle;}
+
+// virtual table containing
+// the overridden GetArea abstract function for the rectangle
+ShapeVTable rectangleTable = {
+    // casting rectangleArea function to
+    // match getArea and getInfo abstract function
+    (double(*)(Shape*)) RectangleArea ,
+    (void(*)(Shape*)) RectangleInfo ,
+    (void(*)(Shape*)) RectangleDestroy
+};
+
+//representing the rectangle constructor
+void RectangleInitialize(Rectangle* rectangle, int height, int width)
+{
+    //initialize super class virtual
+    //function to the overridden rectangleArea
+    rectangle->parent.VTable = &rectangleTable;
+
+    // initialize height and width of the rectangle
+    rectangle->height = height;
+    rectangle->width = width;
+}
+
+// Struct represent the inherited class ellipse
+struct Ellipse
+{
+    // aggregation with the -super class- shape
+    // that representing the inheritance
+    Shape parent;
+
+    // ellipse's radius1
+    int radius1;
+
+    // ellipse's radius2
+    int radius2;
+};
+
+// Function that get the ellipse's area
+double EllipseArea(Ellipse* ellipse) { return 3.14 * ellipse->radius1 * ellipse->radius2; }
+
+// Function that get the info of the Rectangle
+void EllipseInfo(Ellipse* ellipse)
+{
+    cout<<"Shape : Ellipse"<<endl;
+    cout<<"Area : "<<EllipseArea(ellipse)<<endl;
+    cout<<"radius1 : "<<ellipse->radius1<<endl;
+    cout<<"radius2 : "<<ellipse->radius2<<endl;
+}
+
+// Free shape resources.
+void EllipseDestroy(Ellipse* ellipse) { delete ellipse;}
+
+// virtual table containing the overridden
+// GetArea abstract function for the ellipse
+ShapeVTable ellipseTable = {
+
+    // casting ellipseArea function to
+    // match getArea abstract function
+    (double(*)(Shape*)) EllipseArea ,
+    (void(*)(Shape*)) EllipseInfo
+};
+
+// Function that represent the constructor of the ellipse class
+void EllipseInitialize(Ellipse* ellipse, int radius1, int radius2)
+{
+    // initialize super class virtual function
+    // to the overridden ellipseArea
+    ellipse->parent.VTable =&ellipseTable;
+
+    // initialize the ellipse radius1
+    ellipse->radius1 = radius1;
+
+    // initialize the ellipse radius2
+    ellipse->radius2 = radius2;
+}
+
 
 int main(){
 
-    // circle with radius 10
     Circle circle;
+    // circle with radius 10
     CircleInitialize(&circle, 10);
 
-    // rectangle with width 3 and height 5;
     Rectangle rectangle;
+    // rectangle with width 3 and height 5;
     RectangleInitialize(&rectangle, 3, 5);
 
-    // ellipse with radius 10, 12
     Ellipse ellipse;
+    // ellipse with radius 10, 12
     EllipseInitialize(&ellipse, 10, 12);
 
     Shape* shapes[3];
@@ -119,16 +235,17 @@ int main(){
     shapes[1]=(Shape*)&rectangle;
     shapes[2]=(Shape*)&ellipse;
 
-    double total_area = 0.0;
+    double TotalArea = 0.0;
 
-    for (short i = 0; i<3; i++)
+    for(int i = 0; i<3; i++)
     {
-        double d = GetArea(shapes[i]);
-        total_area = total_area + d;
+        double d = getArea(shapes[i]);
+        TotalArea+=d;
         PrintInfo(shapes[i]);
     }
 
-    cout << total_area << endl;
+
+    cout<<"Total Area Of Shapes : "<<TotalArea<<endl;
 
     return 0; // Program Ended Successfully
 }
